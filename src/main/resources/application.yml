@@ -1,7 +1,3 @@
-info:
-  app:
-    name: "@project.name@"
-    description: "@project.description@"
-    version: "@project.version@"
-    encoding: "@project.build.sourceEncoding@"
-    java: "version: @java.version@"
+spring:
+  profiles:
+    include: common

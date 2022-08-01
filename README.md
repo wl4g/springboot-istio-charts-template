@@ -17,5 +17,5 @@ docker run --rm wl4g/demo-httpserver:1.0.0
 ## Testing
 
 ```bash
-curl -XPOST -v -d '{"author":"James Wrong","sex":"Man"}' localhost:8080/demo/echo?name=jack
+curl -skv -XPOST -d '{"author":"James Wrong","sex":"Man"}' localhost:8080/demo/echo?name=jack
 ```
