@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * {@link DemoController}
@@ -41,6 +42,7 @@ import lombok.Setter;
  */
 @RestController
 @RequestMapping("demo")
+@Slf4j
 public class DemoController {
 
     @Value("${info.app.version}")
@@ -48,6 +50,7 @@ public class DemoController {
 
     @RequestMapping(path = "echo", method = { RequestMethod.GET, RequestMethod.POST })
     public EchoMessage echo(HttpServletRequest request, @RequestBody(required = false) String body) {
+        log.info("[{}:called:echo()] uri={}, body={}", appversion, request.getRequestURI(), body);
         EchoMessage msg = new EchoMessage();
         msg.setTimestamp(currentTimeMillis());
         msg.setAppversion(appversion);
