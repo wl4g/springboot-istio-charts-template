@@ -1,6 +1,6 @@
-{{- $webApp := "demo-httpserver" }}
+{{- $webApp := "springboot-istio-canary-demo" }}
 
-{{- $demoHttpServerBaselineTag := index .Values "demo-httpserver" "image" "baselineTag" }}
+{{- $demoHttpServerBaselineTag := index .Values "springboot-istio-canary-demo" "image" "baselineTag" }}
 
 {{- if eq (index .Values $webApp "governance" "type") "Istio" }}
     {{- $domain := index .Values $webApp "governance" "istio" "ingress" "domain" }}
@@ -23,7 +23,7 @@
 4. Here an example of what you should execution command-line on your next grayscale upgrade (canary):
 
     helm -n demo upgrade --install demo demo-stack --set="\
-        demo-httpserver.image.baselineTag={{ $demoHttpServerBaselineTag }},\
-        demo-httpserver.image.upgradeTag=latest,\
-        demo-httpserver.governance.istio.ingress.http.canary.baseline.weight=80,\
-        demo-httpserver.governance.istio.ingress.http.canary.upgrade.weight=20"
+        springboot-istio-canary-demo.image.baselineTag={{ $demoHttpServerBaselineTag }},\
+        springboot-istio-canary-demo.image.upgradeTag=latest,\
+        springboot-istio-canary-demo.governance.istio.ingress.http.canary.baseline.weight=80,\
+        springboot-istio-canary-demo.governance.istio.ingress.http.canary.upgrade.weight=20"

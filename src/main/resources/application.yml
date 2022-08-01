@@ -1,4 +1,4 @@
 spring:
-  application.name: demo-httpserver
+  application.name: springboot-istio-canary-demo
   profiles:
     include: default

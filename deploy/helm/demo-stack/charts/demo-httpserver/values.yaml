@@ -10,7 +10,7 @@
 
 ## This is the spec definition of application instance deployed in Kubernetes.
 image:
-  repository: wl4g/demo-httpserver
+  repository: wl4g/springboot-istio-canary-demo
   baselineTag: latest
   upgradeTag: 
   pullPolicy: IfNotPresent
@@ -220,7 +220,7 @@ governance:
     ## see:https://istio.io/v1.14/docs/reference/config/networking/workload-entry/
     ## see:https://developer.aliyun.com/article/772279
     egress:
-    - name: demo-httpserver-example-wx-payment
+    - name: springboot-istio-canary-demo-example-wx-payment
       classify: thirdparty-external-service
       version: v1
       location: MESH_EXTERNAL ## MESH_INTERNAL|MESH_EXTERNAL

@@ -10,9 +10,9 @@
 # @see: https://helm.sh/zh/docs/topics/charts/
 #
 apiVersion: v2
-name: demo-httpserver
-description: A Helm chart for DEMO HTTPSERVER
-icon: https://raw.githubusercontent.com/wl4g/demo-httpserver/master/shots/logo.png?token=GHSAT0AAAAAABWBQKN3QNYHECQ5LR4PCLKMYWGQIGA
+name: springboot-istio-canary-demo
+description: A Helm chart for SpringBoot-Istio-Canary-Demo
+icon: https://raw.githubusercontent.com/wl4g/springboot-istio-canary-demo/master/shots/logo.png?token=GHSAT0AAAAAABWBQKN3QNYHECQ5LR4PCLKMYWGQIGA
 # A chart can be either an 'application' or a 'library' chart.
 #
 # Application charts are a collection of templates that can be packaged into versioned archives
@@ -41,14 +41,14 @@ maintainers:
 # For best performance, these stateful storage services, which are relied upon below, usually use services
 # outside the kubernetes cluster (headless endpoints) in production environments.
 dependencies:
-  - name: bitnami/redis-cluster
-    condition: redis.internal.enabled
-    repository: "https://charts.bitnami.com/bitnami"
-    version: "7.6.4"
-  - name: bitnami/kafka
-    condition: kafka.internal.enabled
-    repository: "https://charts.bitnami.com/bitnami"
-    version: "18.0.0"
+  #- name: bitnami/redis-cluster
+  #  condition: redis.internal.enabled
+  #  repository: "https://charts.bitnami.com/bitnami"
+  #  version: "7.6.4"
+  #- name: bitnami/kafka
+  #  condition: kafka.internal.enabled
+  #  repository: "https://charts.bitnami.com/bitnami"
+  #  version: "18.0.0"
   # - name: flink
   #   repository: "file://../flink-charts"
   #   version: "0.1.0"

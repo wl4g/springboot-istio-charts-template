@@ -11,8 +11,8 @@
 #
 apiVersion: v2
 name: demo-stack
-description: A Helm chart for IAM
-icon: https://raw.githubusercontent.com/wl4g/demo-httpserver/master/shots/logo.png?token=GHSAT0AAAAAABWBQKN3QNYHECQ5LR4PCLKMYWGQIGA
+description: A Helm chart for SpringBoot-Istio-Canary-Demo
+icon: https://raw.githubusercontent.com/wl4g/springboot-istio-canary-demo/master/shots/logo.png?token=GHSAT0AAAAAABWBQKN3QNYHECQ5LR4PCLKMYWGQIGA
 # A chart can be either an 'application' or a 'library' chart.
 #
 # Application charts are a collection of templates that can be packaged into versioned archives
@@ -41,7 +41,7 @@ maintainers:
 # For best performance, these stateful storage services, which are relied upon below, usually use services
 # outside the kubernetes cluster (headless endpoints) in production environments.
 dependencies:
-  - name: "demo-httpserver"
-    condition: demo-httpserver.enabled
-    repository: "file://charts/demo-httpserver"
+  - name: "springboot-istio-canary-demo"
+    condition: springboot-istio-canary-demo.enabled
+    repository: "file://charts/springboot-istio-canary-demo"
     version: "1.0.0"
