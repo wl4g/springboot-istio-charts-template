@@ -17,7 +17,7 @@
 
     export nodeIp=$(ip a | grep -E '^[0-9]+: (em|eno|enp|ens|eth|wlp)+[0-9]' -A2 | grep inet | awk -F ' ' '{print $2}' | cut -f1 -d/ | head -1)
     export istioInNodePort=$(kubectl -n istio-system get svc istio-ingressgateway -ojson | jq -r '.spec.ports[] | select (.name == "http2") | .nodePort')
-    curl -vk -H 'Host: {{ $webApp }}.{{ $domain }}' ${nodeIp}:${istioInNodePort}/demo/echo?name=jack
+    curl -vk -H 'Host: {{ $webApp }}.{{ $domain }}' -d '{"author":"James Wrong","sex":"Man"}' ${nodeIp}:${istioInNodePort}/demo/echo?name=jack
 {{- end }}
 
 4. Here an example of what you should execution command-line on your next grayscale upgrade (canary):

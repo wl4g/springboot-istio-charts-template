@@ -9,14 +9,13 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.wl4g.demo</groupId>
-	<artifactId>demo-httpserver</artifactId>
+	<artifactId>springboot-istio-canary-demo</artifactId>
 	<version>1.0.0</version>
-	<name>demo-httpserver</name>
-	<description>Demo httpserver project for Spring Boot</description>
+	<name>springboot-istio-canary-demo</name>
 	<properties>
 		<java.version>1.8</java.version>
 		<bootstrap-classname>com.wl4g.demo.DemoApplication</bootstrap-classname>
-		<final.name>demo-httpserver</final.name>
+		<final.name>springboot-istio-canary-demo</final.name>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -118,4 +117,5 @@
 			</build>
 		</profile>
 	</profiles>
+	<description>An example of enterprise-level generic refined traffic governance and canary deployment based on springboot+istio</description>
 </project>
