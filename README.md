@@ -52,10 +52,10 @@ ${nodeIp}:${istioInNodePort}/demo/echo?name=jack | jq -r '.appversion' ; done
 
 ```bash
 helm -n demo upgrade --install demo-stack . --set="\
-    springboot-istio-canary-demo.image.baselineTag=1.0.0,\
-    springboot-istio-canary-demo.image.upgradeTag=1.0.1,\
-    springboot-istio-canary-demo.governance.istio.ingress.http.canary.baseline.weight=80,\
-    springboot-istio-canary-demo.governance.istio.ingress.http.canary.upgrade.weight=20"
+springboot-istio-canary-demo.image.baselineTag=1.0.0,\
+springboot-istio-canary-demo.image.upgradeTag=1.0.1,\
+springboot-istio-canary-demo.governance.istio.ingress.http.canary.baseline.weight=80,\
+springboot-istio-canary-demo.governance.istio.ingress.http.canary.upgrade.weight=20"
 ```
 
 ### 4.4 Simulation Internal users requests.
