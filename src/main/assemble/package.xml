@@ -24,7 +24,7 @@
 			<directory>src/main/resources</directory>
 			<outputDirectory>conf</outputDirectory>
 			<excludes>
-				<exclude>script/**</exclude>
+				<exclude>**</exclude>
 			</excludes>
 			<includes>
 				<!-- <include>dubbo/**</include> -->
