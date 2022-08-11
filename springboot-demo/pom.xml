@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.6.7</version>
+		<relativePath /> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>com.wl4g.demo</groupId>
+	<artifactId>springboot-demo</artifactId>
+	<version>1.0.1</version>
+	<name>springboot-demo</name>
+	<description>General helm-charts and examples for enterprise-level refined traffic governance and canary deployment based on springboot+istio</description>
+	<properties>
+		<java.version>1.8</java.version>
+		<bootstrap-classname>com.wl4g.demo.DemoApplication</bootstrap-classname>
+		<final.name>springboot-demo</final.name>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.projectreactor</groupId>
+			<artifactId>reactor-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>infra-metrics</artifactId>
+			<version>3.0.0</version>
+		</dependency>
+	</dependencies>
+	<build>
+		<finalName>${final.name}</finalName>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>*.*</include>
+				</includes>
+			</resource>
+		</resources>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<includes>
+						<include>**/*Tests.java</include>
+					</includes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<configuration>
+					<configLocation>/../checkstyle/google_checks.xml</configLocation>
+				</configuration>
+				<executions>
+					<!-- Solutions to maven checkstyle errors in Eclipse: https://gitee.com/wl4g/blogs/tree/master/docs/articles/other/maven.checkstyle-eclipse-error/README_CN.md -->
+					<!-- <execution> -->
+					<!-- <id>checkstyle</id> -->
+					<!-- <phase>validate</phase> -->
+					<!-- <goals> -->
+					<!-- <goal>check</goal> -->
+					<!-- </goals> -->
+					<!-- <configuration> -->
+					<!-- <failOnViolation>true</failOnViolation> -->
+					<!-- </configuration> -->
+					<!-- </execution> -->
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<finalName>${final.name}-${project.version}-bin</finalName>
+					<appendAssemblyId>false</appendAssemblyId>
+					<descriptors>
+						<descriptor>src/main/assemble/package.xml</descriptor>
+					</descriptors>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+	<profiles>
+		<profile>
+			<id>build:tar:docker</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<configuration>
+							<finalName>${final.name}-${project.version}-bin</finalName>
+							<appendAssemblyId>false</appendAssemblyId>
+							<descriptors>
+								<descriptor>src/main/assemble/package.xml</descriptor>
+							</descriptors>
+						</configuration>
+						<executions>
+							<execution>
+								<id>make-assembly</id>
+								<phase>package</phase>
+								<goals>
+									<goal>single</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<!-- Usages examples: -->
+					<!-- export DOCKER_HOST=tcp://localhost:2375 -->
+					<!-- [build]: mvn -Pbuild:tar:docker -->
+					<!-- [push]: mvn -Pbuild:tar:docker -->
+					<!-- [push]: mvn -Pbuild:tar:docker dockerfile:build dockerfile:push -Ddockerfile.username=wl4g -Ddockerfile.password=xxx -->
+					<plugin>
+						<groupId>com.spotify</groupId>
+						<artifactId>dockerfile-maven-plugin</artifactId>
+						<version>1.4.13</version>
+						<executions>
+							<execution>
+								<id>default</id>
+								<goals>
+									<goal>build</goal>
+									<!-- <goal>push</goal> -->
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<!-- see:https://github.com/spotify/dockerfile-maven/issues/154 -->
+							<contextDirectory>${project.basedir}</contextDirectory>
+							<dockerfile>${project.basedir}/build/docker/Dockerfile</dockerfile>
+							<repository>wl4g/${project.build.finalName}</repository>
+							<useMavenSettingsForAuth>true</useMavenSettingsForAuth>
+							<tag>${project.version}</tag>
+							<readTimeoutMillis>60000</readTimeoutMillis>
+							<connectTimeoutMillis>20000</connectTimeoutMillis>
+							<buildArgs>
+								<APP_NAME>${project.build.finalName}</APP_NAME>
+								<APP_VERSION>${project.version}</APP_VERSION>
+								<APP_MAINCLASS>${bootstrap-classname}</APP_MAINCLASS>
+							</buildArgs>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+</project>

@@ -1,0 +1,9 @@
+spring:
+  application.name: springboot-demo
+
+project:
+  name: "@project.name@"
+  description: "@project.description@"
+  version: "@project.version@"
+  encoding: "@project.build.sourceEncoding@"
+  build: "version: @java.version@"

@@ -1,0 +1,562 @@
+# Copyright (c) 2017 ~ 2025, the original author James Wong individual Inc,
+# All rights reserved. Contact us <jameswong1376@gmail.com, 983708408@qq.com>
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# This parent charts will override the value of child charts.
+# see:https://github.com/whmzsu/helm-doc-zh-cn/blob/master/chart_template_guide/subcharts_and_globals-zh_cn.md
+
+## ---------------------------------- SPRINGBOOT DEMO Configuration. ----------------------------------
+
+## This is the spec definition of application instance deployed in Kubernetes.
+springboot-demo:
+  enabled: true
+  image:
+    repository: wl4g/springboot-demo
+    baselineTag: 1.0.0
+    upgradeTag: 1.0.1
+
+  envConfigs: {}
+
+  agentConfigs: {}
+
+  appConfigs: {}
+
+  governance:
+    istio:
+      ingress:
+        ## see:https://istio.io/v1.14/docs/reference/config/networking/virtual-service/#HTTPRouteDestination
+        domain: wl4g.io ## Top level 1 domain.
+
+## ------------------------- Global Shared Components Configuration Examples. -------------------------
+global:
+  ##
+  ## This is a script pre-start hook that is automatically executed before starting the container and
+  ## can be used to customize the pre-launch actions (such as setup environments, etc.)
+  ##
+  ## Tip: The advantage of the following pre-start hook script mechanism is that it is more flexible
+  ## than directly mounting the configuration through configmap+volume. For example, it cannot control
+  ## the order of exporting environment variables, that is, variable evaluation cannot be used,
+  ## such as export A=123; export B="${A}"
+  ##
+  preStartScript: |-
+    #!/bin/sh
+    #export SPRING_SLEUTH_OTEL_EXPORTER_OTLP_ENDPOENT="http://otlp-collector.otlp.svc.cluster.local:4317"
+    #export SPRING_SLEUTH_OTEL_EXPORTER_JAEGER_ENDPOENT="http://jaeger-collector.jaeger.svc.cluster.local:14250"
+    #export SPRING_REDIS_CLUSTER_NODES="172.24.47.9:6379,172.24.47.9:6380,172.24.47.9:6381,172.24.47.10:6379,172.24.47.10:6380,172.24.47.10:6381"
+    #export SPRING_REDIS_CLUSTER_PASSWORD="123456"
+    #export SPRING_DATASOURCE_HIKARI_JDBCURL="jdbc:mysql://172.24.47.5:3306/iam?useunicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true"
+    #export SPRING_DATASOURCE_HIKARI_USERNAME="demo"
+    #export SPRING_DATASOURCE_HIKARI_PASSWORD="${SPRING_DATASOURCE_HIKARI_USERNAME}"
+
+  envConfigs: {}
+
+  agentConfigs: {}
+
+  appConfigs: {}
+
+  ##
+  ## The following are the global public dependent components examples configuration, which support the internal
+  ## components that are automatically deployed using the current charts, or the services deployed in the VM 
+  ## externally using Kubernetes (such as MySQL/MongoDB/HBase services for high performance, etc.)
+  ##
+  ## Notice: Automatic deployment is disabled by default for all components, you can partially enable it
+  ## according to actual needs.
+  ##
+  components:
+    ## see:https://open-telemetry.github.io/opentelemetry-helm-charts
+    otlp:
+      internal:
+        enabled: false
+      external:
+        enabled: false
+        namespace:
+        serviceAccount:
+        labels:
+          classify: external-service
+          version: v1
+        ## endpoint example: http://10.0.0.114:4318/api/traces
+        instancePorts:
+        - protocol: TCP
+          targetPort: 4318
+        instanceAddresses:
+        - ip: 10.0.0.114
+          hosts:
+          - localhost.local
+        location: MESH_EXTERNAL
+        resolution: NONE
+
+    ## see:https://jaegertracing.github.io/helm-charts/
+    jaeger:
+      internal:
+        enabled: false
+      external:
+        enabled: false
+        namespace:
+        serviceAccount:
+        labels:
+          classify: external-service
+          version: v1
+        ## endpoint example: http://10.0.0.114:14268/api/traces
+        instancePorts:
+        - protocol: TCP
+          targetPort: 14268
+        instanceAddresses:
+        - ip: 10.0.0.114
+          hosts:
+          - localhost.local
+        location: MESH_EXTERNAL
+        resolution: NONE
+
+    ## see:https://bitnami.com/stack/zookeeper/helm
+    zookeeper:
+      internal:
+        enabled: false
+      external:
+        enabled: false
+        namespace:
+        serviceAccount:
+        labels:
+          classify: external-service
+          version: v1
+        instancePorts:
+        - protocol: TCP
+          targetPort: 2181
+        instanceAddresses:
+        - ip: 172.24.47.6
+          hosts:
+          - emr-worker-1
+        - ip: 172.24.47.7
+          hosts:
+          - emr-worker-2
+        - ip: 172.24.47.8
+          hosts:
+          - emr-worker-3
+        location: MESH_EXTERNAL
+        resolution: NONE
+
+    ## see:https://bitnami.com/stack/kafka/helm
+    kafka:
+      internal:
+        enabled: false
+      external:
+        enabled: false
+        namespace:
+        serviceAccount:
+        labels:
+          classify: external-service
+          version: v1
+        instancePorts:
+        - protocol: TCP
+          targetPort: 9092
+        instanceAddresses:
+        - ip: 172.24.47.6
+          hosts:
+          - emr-worker-1
+        - ip: 172.24.47.7
+          hosts:
+          - emr-worker-2
+        - ip: 172.24.47.8
+          hosts:
+          - emr-worker-3
+        location: MESH_EXTERNAL
+        resolution: NONE
+
+    ## see:https://repos.emqx.io/charts
+    emqx:
+      internal:
+        enabled: false
+      external:
+        enabled: false
+        namespace:
+        serviceAccount:
+        labels:
+          classify: external-service
+          version: v1
+        instancePorts:
+        - protocol: TCP
+          targetPort: 9092
+        instanceAddresses:
+        - ip: 172.24.47.6
+          hosts:
+          - emr-worker-1
+        - ip: 172.24.47.7
+          hosts:
+          - emr-worker-2
+        - ip: 172.24.47.8
+          hosts:
+          - emr-worker-3
+        location: MESH_EXTERNAL
+        resolution: NONE
+
+    ## see:https://github.com/wl4g/shardingproxy
+    ## see:https://bitnami.com/stack/mysql/helm
+    mysql:
+      internal:
+        enabled: false
+      external:
+        enabled: false
+        namespace:
+        serviceAccount:
+        labels:
+          classify: external-service
+          version: v1
+        instancePorts:
+        - protocol: TCP
+          targetPort: 3308 ## Native default: 3306
+        instanceAddresses:
+        - ip: 172.24.47.4
+          hosts:
+          - emr-master-1
+        - ip: 172.24.47.5
+          hosts:
+          - emr-master-2
+        location: MESH_EXTERNAL
+        resolution: NONE
+
+    ## see:https://github.com/wl4g/shardingproxy
+    ## see:https://bitnami.com/stack/postgresql/helm
+    postgresql:
+      internal:
+        enabled: false
+      external:
+        enabled: false
+        namespace:
+        serviceAccount:
+        labels:
+          classify: external-service
+          version: v1
+        instancePorts:
+        - protocol: TCP
+          targetPort: 3308 ## Native default: 5432
+        instanceAddresses:
+        - ip: 172.24.47.4
+          hosts:
+          - emr-master-1
+        - ip: 172.24.47.5
+          hosts:
+          - emr-master-2
+        location: MESH_EXTERNAL
+        resolution: NONE
+
+    ## see:https://bitnami.com/stack/redis/helm
+    redis:
+      internal:
+        enabled: false
+      external:
+        enabled: false
+        namespace:
+        serviceAccount:
+        labels:
+          classify: external-service
+          version: v1
+        instancePorts:
+        - protocol: TCP
+          targetPort: 6379
+        - protocol: TCP
+          targetPort: 6380
+        - protocol: TCP
+          targetPort: 6381
+        instanceAddresses:
+        - ip: 172.24.47.9
+          hosts:
+          - n1.redis.ecsafecloudcs.com
+        - ip: 172.24.47.10
+          hosts:
+          - n2.redis.ecsafecloudcs.com
+        - ip: 172.24.47.11
+          hosts:
+          - n3.redis.ecsafecloudcs.com
+        location: MESH_EXTERNAL
+        resolution: NONE
+
+    ## see:https://bitnami.com/stack/cassandra/helm
+    cassandra:
+      internal:
+        enabled: false
+      external:
+        enabled: false
+        namespace:
+        serviceAccount:
+        labels:
+          classify: external-service
+          version: v1
+        instancePorts:
+        - protocol: TCP
+          targetPort: 9042
+        instanceAddresses:
+        - ip: 172.24.47.6
+          hosts:
+          - emr-worker-1
+        - ip: 172.24.47.7
+          hosts:
+          - emr-worker-2
+        - ip: 172.24.47.8
+          hosts:
+          - emr-worker-3
+        location: MESH_EXTERNAL
+        resolution: NONE
+
+    ## see:https://bitnami.com/stack/minio/helm
+    minio:
+      internal:
+        enabled: false
+      external:
+        enabled: false
+        namespace:
+        serviceAccount:
+        labels:
+          classify: external-service
+          version: v1
+        instancePorts:
+        - protocol: TCP
+          targetPort: 9000
+        - protocol: TCP
+          targetPort: 9090
+        instanceAddresses:
+        - ip: 172.24.47.6
+          hosts:
+          - emr-worker-1
+        - ip: 172.24.47.7
+          hosts:
+          - emr-worker-2
+        - ip: 172.24.47.8
+          hosts:
+          - emr-worker-3
+        location: MESH_EXTERNAL
+        resolution: NONE
+
+    ## see:https://bitnami.com/stack/mongodb/helm
+    mongodb:
+      internal:
+        enabled: false
+      external:
+        enabled: false
+        namespace:
+        serviceAccount:
+        labels:
+          classify: external-service
+          version: v1
+        instancePorts:
+        - protocol: TCP
+          targetPort: 27017
+        instanceAddresses:
+        - ip: 172.24.47.6
+          hosts:
+          - emr-worker-1
+        - ip: 172.24.47.7
+          hosts:
+          - emr-worker-2
+        - ip: 172.24.47.8
+          hosts:
+          - emr-worker-3
+        location: MESH_EXTERNAL
+        resolution: NONE
+
+    ## see:https://bitnami.com/stack/elasticsearch/helm
+    elasticsearch:
+      internal:
+        enabled: false
+      external:
+        enabled: false
+        namespace:
+        serviceAccount:
+        labels:
+          classify: external-service
+          version: v1
+        instancePorts:
+        - protocol: TCP
+          targetPort: 9200
+        - protocol: TCP
+          targetPort: 9300
+        instanceAddresses:
+        - ip: 172.24.47.6
+          hosts:
+          - emr-worker-1
+        - ip: 172.24.47.7
+          hosts:
+          - emr-worker-2
+        - ip: 172.24.47.8
+          hosts:
+          - emr-worker-3
+        location: MESH_EXTERNAL
+        resolution: NONE
+
+    ## see:https://bitnami.com/stack/solr/helm
+    solr:
+      internal:
+        enabled: false
+      external:
+        enabled: false
+        namespace:
+        serviceAccount:
+        labels:
+          classify: external-service
+          version: v1
+        instancePorts:
+        - protocol: TCP
+          targetPort: 7983
+        - protocol: TCP
+          targetPort: 8983
+        instanceAddresses:
+        - ip: 172.24.47.6
+          hosts:
+          - emr-worker-1
+        - ip: 172.24.47.7
+          hosts:
+          - emr-worker-2
+        - ip: 172.24.47.8
+          hosts:
+          - emr-worker-3
+        location: MESH_EXTERNAL
+        resolution: NONE
+
+    hmaster:
+      internal:
+        enabled: false
+      external:
+        enabled: false
+        namespace:
+        serviceAccount:
+        labels:
+          classify: external-service
+          version: v1
+        instancePorts:
+        - protocol: TCP
+          targetPort: 16000
+        - protocol: TCP
+          targetPort: 16010
+        instanceAddresses:
+        - ip: 172.24.47.4
+          hosts:
+          - emr-master-1
+        - ip: 172.24.47.5
+          hosts:
+          - emr-master-2
+        location: MESH_EXTERNAL
+        resolution: NONE
+
+    hregionserver:
+      internal:
+        enabled: false
+      external:
+        enabled: false
+        namespace:
+        serviceAccount:
+        labels:
+          classify: external-service
+          version: v1
+        instancePorts:
+        - protocol: TCP
+          targetPort: 16020
+        - protocol: TCP
+          targetPort: 16030
+        instanceAddresses:
+        - ip: 172.24.47.6
+          hosts:
+          - emr-worker-1
+        - ip: 172.24.47.7
+          hosts:
+          - emr-worker-2
+        - ip: 172.24.47.8
+          hosts:
+          - emr-worker-3
+        location: MESH_EXTERNAL
+        resolution: NONE
+
+    namenode:
+      internal:
+        enabled: false
+      external:
+        enabled: false
+        namespace:
+        serviceAccount:
+        labels:
+          classify: external-service
+          version: v1
+        instancePorts:
+        - protocol: TCP
+          targetPort: 9870
+        - protocol: TCP
+          targetPort: 8020
+        - protocol: TCP
+          targetPort: 8022
+        instanceAddresses:
+        - ip: 172.24.47.4
+          hosts:
+          - emr-master-1
+        - ip: 172.24.47.5
+          hosts:
+          - emr-master-2
+        location: MESH_EXTERNAL
+        resolution: NONE
+
+    nodemanager:
+      internal:
+        enabled: false
+      external:
+        enabled: false
+        namespace:
+        serviceAccount:
+        labels:
+          classify: external-service
+          version: v1
+        instancePorts:
+        - protocol: TCP
+          targetPort: 8040
+        - protocol: TCP
+          targetPort: 8041
+        - protocol: TCP
+          targetPort: 7337
+        - protocol: TCP
+          targetPort: 8042
+        - protocol: TCP
+          targetPort: 13562
+        instanceAddresses:
+        - ip: 172.24.47.6
+          hosts:
+          - emr-worker-1
+        - ip: 172.24.47.7
+          hosts:
+          - emr-worker-2
+        - ip: 172.24.47.8
+          hosts:
+          - emr-worker-3
+        location: MESH_EXTERNAL
+        resolution: NONE
+
+    datanode:
+      internal:
+        enabled: false
+      external:
+        enabled: false
+        namespace:
+        serviceAccount:
+        labels:
+          classify: external-service
+          version: v1
+        instancePorts:
+        - protocol: TCP
+          targetPort: 9867
+        - protocol: TCP
+          targetPort: 9864
+        - protocol: TCP
+          targetPort: 9866
+        - protocol: TCP
+          targetPort: 32828
+        instanceAddresses:
+        - ip: 172.24.47.6
+          hosts:
+          - emr-worker-1
+        - ip: 172.24.47.7
+          hosts:
+          - emr-worker-2
+        - ip: 172.24.47.8
+          hosts:
+          - emr-worker-3
+        location: MESH_EXTERNAL
+        resolution: NONE
