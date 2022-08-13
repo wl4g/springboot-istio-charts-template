@@ -1,5 +1,5 @@
 # Copyright (c) 2017 ~ 2025, the original author James Wong individual Inc,
-# All rights reserved. Contact us <jameswong1376@gmail.com, 983708408@qq.com>
+# All rights reserved. Contact us <jameswong1376@gmail.com>
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -115,17 +115,7 @@ appConfigs:
   # application.yml: ""
 
 service:
-  ## Service type
   type: ClusterIP
-  ## Application service port.
-  apiPort: 8080
-  ## Management port.
-  managementPort: 10108
-  ## Specify the nodePort(s) value for the LoadBalancer and NodePort service types.
-  ## see:https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
-  nodePorts:
-    api:
-    management:
   ##
   ## Set the LoadBalancer service type to internal only.
   ## see:https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer
@@ -139,6 +129,21 @@ service:
   externalIPs: []
   ## Provide any additional annotations which may be required. Evaluated as a template
   annotations: {}
+  exposes:
+    ## Application primary http service port.
+    api:
+      port: 8080
+      protocol: TCP
+      ## Specify the nodePort(s) value for the LoadBalancer and NodePort service types.
+      ## see:https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
+      nodePort:
+    ## Management port.
+    management:
+      port: 10108
+      protocol: TCP
+      ## Specify the nodePort(s) value for the LoadBalancer and NodePort service types.
+      ## see:https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
+      nodePort:
 
 governance:
   ## Service governance type.
@@ -146,7 +151,7 @@ governance:
   ingress: # The legacy ingress.
     ## ingress for application api
     api:
-      enabled: false
+      enabled: true
       ingressClassName: nginx
       annotations:
         kubernetes.io/ingress.class: nginx
@@ -159,7 +164,7 @@ governance:
     ##
     ## ingress for application management.
     management:
-      enabled: false
+      enabled: true
       ingressClassName: nginx
       annotations: {}
         # kubernetes.io/ingress.class: nginx
@@ -175,6 +180,8 @@ governance:
       domain: wl4g.io ## Top level one domain.
       customHosts: []
       http:
+        ## see to: .Values.service.expose.<name>
+        primaryHttpServiceExposeName: api
         ## The canary traffic governance, ie: rules for grouping pods.
         ## see:https://istio.io/v1.14/docs/reference/config/networking/virtual-service/#Destination
         ## see:https://istio.io/latest/zh/blog/2017/0.1-canary/
