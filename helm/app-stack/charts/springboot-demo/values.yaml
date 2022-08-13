@@ -133,14 +133,16 @@ service:
     ## Application primary http service port.
     api:
       port: 8080
-      protocol: TCP
+      protocol4: TCP
+      protocol7: HTTP
       ## Specify the nodePort(s) value for the LoadBalancer and NodePort service types.
       ## see:https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
       nodePort:
     ## Management port.
     management:
       port: 10108
-      protocol: TCP
+      protocol4: TCP
+      protocol7: HTTP
       ## Specify the nodePort(s) value for the LoadBalancer and NodePort service types.
       ## see:https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
       nodePort:

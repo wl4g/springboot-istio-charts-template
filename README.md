@@ -28,7 +28,7 @@ kubectl create ns demo
 kubectl label ns demo istio-injection=enabled --overwrite
 
 # By default, only the baseline will be deployed initially.
-helm -n demo upgrade -i springboot-demo ./helm/app-stack
+helm -n demo upgrade -i demo ./helm/app-stack
 ```
 
 ## 5. Testing

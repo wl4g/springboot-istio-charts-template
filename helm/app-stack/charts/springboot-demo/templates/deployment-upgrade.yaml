@@ -188,9 +188,9 @@ spec:
           ports:
           ports:
             {{- range $name, $expose := .Values.service.exposes }}
-            - name: {{ $expose.protocol | lower }}-{{ $name }}
+            - name: {{ $expose.protocol7 | lower }}-{{ $name }}
               containerPort: {{ $expose.port | default 8080 }}
-              protocol: {{ $expose.protocol | default "TCP" }}
+              protocol: {{ $expose.protocol4 | default "TCP" }}
             {{- end }}
 
           ## see:https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/

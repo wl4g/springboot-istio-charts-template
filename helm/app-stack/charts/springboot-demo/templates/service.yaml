@@ -20,7 +20,7 @@ metadata:
     app.kubernetes.io/name: {{ .Chart.Name }}
     app.kubernetes.io/release: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-    helm.sh/chart: {{ .Chart.Name }}
+    helm.sh/chart: {{ template "app.chart" . }}
   {{- if .Values.service.annotations }}
   annotations:
   {{ toYaml .Values.service.annotations | indent 4 }}
@@ -43,10 +43,10 @@ spec:
 
   ports:
   {{- range $name, $expose := .Values.service.exposes }}
-  - name: {{ $expose.protocol | lower }}-{{ $name }}
+  - name: {{ $expose.protocol7 | lower }}-{{ $name }}
     port: {{ $expose.port | default 8080 }}
-    protocol: {{ $expose.protocol | default "TCP" }}
-    targetPort: {{ $expose.protocol | lower }}-{{ $name }}
+    protocol: {{ $expose.protocol4 | default "TCP" }}
+    targetPort: {{ $expose.protocol7 | lower }}-{{ $name }}
     {{- if and (or (eq $serviceType "NodePort") (eq $serviceType "LoadBalancer")) (not (empty $expose.nodePort)) }}
     nodePort: {{ .Values.service.nodePorts.api }}
     {{- else if eq $serviceType "ClusterIP" }}
