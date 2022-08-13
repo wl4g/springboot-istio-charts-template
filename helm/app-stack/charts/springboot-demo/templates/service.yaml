@@ -50,7 +50,7 @@ spec:
     ## the port name must start with 'http-', otherwise the istio-proxy startupProbe/livenessProbe will fail???
     targetPort: {{ $expose.protocol7 | lower }}-{{ $name }}
     {{- if and (or (eq $serviceType "NodePort") (eq $serviceType "LoadBalancer")) (not (empty $expose.nodePort)) }}
-    nodePort: {{ .Values.service.nodePorts.api }}
+    nodePort: {{ $expose.nodePort }}
     {{- else if eq $serviceType "ClusterIP" }}
     nodePort: null
     {{- end }}
