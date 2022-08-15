@@ -37,7 +37,9 @@ spec:
       - {{ template "app.name" . }}.{{- .Values.governance.istio.ingress.domain }}
       ## Add app ingress custom extension hosts.
       {{- if not (empty .Values.governance.istio.ingress.customHosts) }}
-      {{- toYaml .Values.governance.istio.ingress.customHosts | nindent 4 }}
+      {{- range $index, $host := .Values.governance.istio.ingress.customHosts }}
+      - {{ $host }}
+      {{- end }}
       {{- end }}
       port:
         {{- if eq .Values.governance.istio.ingress.http.scheme "http" }}
@@ -76,7 +78,9 @@ spec:
   - {{ template "app.name" . }}.{{- .Values.governance.istio.ingress.domain }}
   ## Add custom extension hosts.
   {{- if not (empty .Values.governance.istio.ingress.customHosts) }}
-  {{- toYaml .Values.governance.istio.ingress.customHosts | nindent 4 }}
+  {{- range $index, $host := .Values.governance.istio.ingress.customHosts }}
+  - {{ $host }}
+  {{- end }}
   {{- end }}
   ## see:https://istio.io/v1.14/docs/reference/config/networking/virtual-service/#HTTPRouteDestination
   http:
