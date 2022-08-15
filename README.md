@@ -40,7 +40,7 @@ export nodeIP=$(ip a | grep -E '^[0-9]+: (em|eno|enp|ens|eth|wlp)+[0-9]' -A2 | g
 export nodePort=$(kubectl -n istio-system get svc istio-ingressgateway -ojson | jq -r '.spec.ports[] | select (.name == "http2") | .nodePort')
 ```
 
-### 5.2 Simulation normal user requests
+### 5.2 Simulation normal user requests (production version)
 
 ```bash
 for i in `seq 1 100`; do echo -n "response $i from app version is: "; \
@@ -60,7 +60,9 @@ springboot-demo.governance.istio.ingress.http.canary.baseline.weight=80,\
 springboot-demo.governance.istio.ingress.http.canary.upgrade.weight=20"
 ```
 
-### 5.4 Simulation Internal users requests
+### 5.4 Simulation Internal users requests (gray version)
+
+- Requests Example
 
 ```bash
 for i in `seq 1 100`; do echo -n "response $i from app version is: "; \
@@ -70,6 +72,30 @@ curl -s -XPOST \
 -d '{"author":"James Wrong","sex":"Man"}' \
 ${nodeIP}:${nodePort}/demo/echo?name=jack | jq -r '.appversion' ; done
 ```
+
+- Response Example
+
+```log
+POST /demo/echo?name=jack HTTP/1.1
+Host: springboot-demo.wl4g.io
+User-Agent: curl/7.68.0
+Accept: */*
+Cookie: "sid=abcdefg; _email=jack@wl4g.io; uid=abcd1234"
+Content-Length: 36
+Content-Type: application/x-www-form-urlencoded
+
+HTTP/1.1 200 OK
+content-type: application/json
+content-length: 888
+date: Mon, 15 Aug 2022 02:28:51 GMT
+x-envoy-upstream-service-time: 7
+server: istio-envoy
+x-app-version: 1.0.1
+
+1.0.1
+```
+
+- Notice: The custom additional response header: **`x-app-version`** is the version of the backend application processing the current request.
 
 ### 5.5 Summary
 
