@@ -2,7 +2,17 @@
 
 Generic helm-charts and examples for enterprise-level refined traffic governance and canary deployment based on springboot+istio
 
-## 2. Building
+## 2. Features
+
+- One-step support for istio-based dual-version (`baseline`/`upgrade`) canary (grayscale) deploy, percentage traffic load supported.
+
+- Automatically calculate the number of Pods replicas based on the traffic percentage.
+
+- The based on istio's traffic governance capabilities, it supports the necessary functions of distributed microservices such as `canary routing` , `request limiting`, `circuit breaker`, `fault injection`, and `request response filtering` etc.
+
+- Automatically add the response header `x-app-version`, the standard microservice interface is friendly to gray service diagnosis.
+
+## 3. Building
 
 ```bash
 git clone https://github.com/wl4g/springboot-istio-charts-template.git
@@ -12,13 +22,13 @@ cd springboot-istio-charts-template/springboot-demo/
 mvn clean package -DskipTests -P build:tar:docker
 ```
 
-## 3. Deploy on Docker
+## 4. Deploy on Docker
 
 ```bash
 docker run --rm wl4g/springboot-demo:1.0.0
 ```
 
-## 4. Deploy on Kubernetes
+## 5. Deploy on Kubernetes
 
 - Initial deploy
 
@@ -31,16 +41,16 @@ kubectl label ns demo istio-injection=enabled --overwrite
 helm -n demo upgrade -i demo ./helm/app-stack
 ```
 
-## 5. Testing
+## 6. Testing
 
-### 5.1 Gets Istio ingress information
+### 6.1 Gets Istio ingress information
 
 ```bash
 export nodeIP=$(ip a | grep -E '^[0-9]+: (em|eno|enp|ens|eth|wlp)+[0-9]' -A2 | grep inet | awk -F ' ' '{print $2}' | cut -f1 -d/ | head -1)
 export nodePort=$(kubectl -n istio-system get svc istio-ingressgateway -ojson | jq -r '.spec.ports[] | select (.name == "http2") | .nodePort')
 ```
 
-### 5.2 Simulation normal user requests (production version)
+### 6.2 Simulation normal user requests (production version)
 
 ```bash
 for i in `seq 1 100`; do echo -n "response $i from app version is: "; \
@@ -50,7 +60,7 @@ curl -s -XPOST \
 ${nodeIP}:${nodePort}/demo/echo?name=jack | jq -r '.appversion' ; done
 ```
 
-### 5.3 Redeploy, modify the percentage of load traffic of different versions of pods
+### 6.3 Redeploy, modify the percentage of load traffic of different versions of pods
 
 ```bash
 helm -n demo upgrade --install demo-stack . --set="\
@@ -60,7 +70,7 @@ springboot-demo.governance.istio.ingress.http.canary.baseline.weight=80,\
 springboot-demo.governance.istio.ingress.http.canary.upgrade.weight=20"
 ```
 
-### 5.4 Simulation Internal users requests (gray version)
+### 6.4 Simulation Internal users requests (gray version)
 
 - Requests Example
 
@@ -97,8 +107,8 @@ x-app-version: 1.0.1
 
 - Notice: The custom additional response header: **`x-app-version`** is the version of the backend application processing the current request.
 
-### 5.5 Summary
+### 6.5 Summary
 
-- The 5.2 No matter how many times the request is made, the responsed result `appversion` is always `1.0.0`, because it is a simulated normal user.
+- The 6.2 No matter how many times the request is made, the responsed result `appversion` is always `1.0.0`, because it is a simulated normal user.
 
-- The 5.4 If the request is made 100 times, about 80% of the response result `appversion` is `1.0.0`, and 20% is `1.0.1`, because it is a request to simulate an internal experimental user.
+- The 6.4 If the request is made 100 times, about 80% of the response result `appversion` is `1.0.0`, and 20% is `1.0.1`, because it is a request to simulate an internal experimental user.
